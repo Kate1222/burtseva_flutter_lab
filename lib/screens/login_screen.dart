@@ -1,4 +1,4 @@
-import 'package:burtseva_flutter_lab/screens/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,6 +22,33 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isObscure = !_isObscure;
     });
+  }
+
+  signIn() async {
+    if (emailController.text == '' || passwordController.text == '') {
+      snackBar("Input email and password!");
+    } else {
+      try {
+        setState(() {
+          const Center(child: CircularProgressIndicator());
+        });
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+      } catch (e) {
+        snackBar(e.toString());
+      }
+    }
+  }
+
+  void snackBar(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override
@@ -102,11 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 color: Colors.black
             ),
             child: TextButton(
-              onPressed: (){
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-                  builder: (context) => const HomeScreen(),
-                ), (route) => false);
-              },
+              onPressed: signIn,
               child: Text(
                 'Login',
                 style: GoogleFonts.raleway(
@@ -132,6 +155,32 @@ class _LoginScreenState extends State<LoginScreen> {
                     recognizer: TapGestureRecognizer()
                       ..onTap = widget.onClickedSignUp,
                     text: 'Register!',
+                    style: GoogleFonts.raleway(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: RichText(
+              text: TextSpan(
+                text: 'Forgot password? ',
+                style: GoogleFonts.raleway(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                ),
+                children: [
+                  TextSpan(
+                    /*recognizer: TapGestureRecognizer()
+                      ..onTap = widget.onClickedSignUp,*/
+                    text: 'Restore',
                     style: GoogleFonts.raleway(
                       color: Colors.black,
                       fontSize: 20,

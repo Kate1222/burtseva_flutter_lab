@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -107,6 +108,56 @@ class HomeScreen extends StatelessWidget {
                 style: GoogleFonts.raleway(
                     fontSize: 32,
                     fontWeight: FontWeight.w700
+                ),
+              ),
+            ),
+          ),
+          Container(
+            height: 45,
+            width: screenWidth - 76,
+            margin: const EdgeInsets.only(top: 40, left: 38, right: 38),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(35),
+                color: Colors.white
+            ),
+            child: Align(
+              alignment: Alignment.center,
+              child: TextButton(
+                onPressed: () => FirebaseAuth.instance.signOut(),
+                child: Text(
+                  'Logout',
+                  style: GoogleFonts.raleway(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            height: 45,
+            width: screenWidth - 76,
+            margin: const EdgeInsets.only(top: 40, left: 38, right: 38),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(35),
+                color: Colors.white
+            ),
+            child: Align(
+              alignment: Alignment.center,
+              child: TextButton(
+                onPressed: (){
+                  FirebaseAuth.instance.authStateChanges().listen((User? user) {
+                    user?.delete();
+                  });
+                },
+                child: Text(
+                  'Remove account',
+                  style: GoogleFonts.raleway(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.red
+                  ),
                 ),
               ),
             ),

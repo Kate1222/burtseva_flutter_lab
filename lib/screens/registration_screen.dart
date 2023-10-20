@@ -1,8 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'home_screen.dart';
+//import 'home_screen.dart';
 
 class RegistrationScreen extends StatefulWidget {
   final VoidCallback onClickedSignIn;
@@ -20,10 +21,45 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool _isObscure1 = true;
   bool _isObscure2 = true;
 
-  void showPassword(bool isObscure) {
+  void showPassword1() {
     setState(() {
-      isObscure = !isObscure;
+      _isObscure1 = !_isObscure1;
     });
+  }
+  void showPassword2() {
+    setState(() {
+      _isObscure2 = !_isObscure2;
+    });
+  }
+
+  //snackBar
+  void snackBar(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  //registration
+  Future registration() async {
+    if (emailController.text == '' ||
+        passwordController.text == '' ||
+        repeatPasswordController.text == '') {
+      snackBar('Please, input data');
+    } else if (passwordController.text != repeatPasswordController.text) {
+      snackBar('Wrong confirm password!');
+    } else {
+      try {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+      } catch (e) {
+        snackBar(e.toString());
+      }
+    }
   }
 
   @override
@@ -79,9 +115,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 icon: Icon(
                   _isObscure1 ? Icons.visibility : Icons.visibility_off,
                 ),
-                onPressed: (){
-                  showPassword(_isObscure1);
-                },
+                onPressed: showPassword1,
               ),
             ),
             controller: passwordController,
@@ -110,9 +144,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 icon: Icon(
                   _isObscure2 ? Icons.visibility : Icons.visibility_off,
                 ),
-                onPressed: (){
-                  showPassword(_isObscure2);
-                },
+                onPressed: showPassword2,
               ),
             ),
             controller: repeatPasswordController,
@@ -134,11 +166,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               color: Colors.black
           ),
           child: TextButton(
-            onPressed: (){
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-                builder: (context) => const HomeScreen(),
-              ), (route) => false);
-            },
+            onPressed: registration,
             child: Text(
               'Registration',
               style: GoogleFonts.raleway(
