@@ -135,11 +135,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
           child: TextButton(
             onPressed: (){
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const HomeScreen(),
-                ),
-              );
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                builder: (context) => const HomeScreen(),
+              ), (route) => false);
             },
             child: Text(
               'Registration',

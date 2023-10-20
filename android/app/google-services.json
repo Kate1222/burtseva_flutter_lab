@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "256070925050",
+    "project_id": "burtseva-flutter-lab-d4da8",
+    "storage_bucket": "burtseva-flutter-lab-d4da8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:256070925050:android:d5fe0d5fa739bb7666a743",
+        "android_client_info": {
+          "package_name": "com.example.burtseva_flutter_lab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3sv7-Oi51i1UwoeD3QtuQxlfsr_DaEGs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
