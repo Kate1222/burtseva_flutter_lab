@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
-      } catch (e) {
+      } on FirebaseAuthException catch (e) {
         snackBar(e.toString());
       }
     }
@@ -60,139 +60,146 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       backgroundColor: Colors.grey,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: Text(
-              'Login',
-              style: GoogleFonts.raleway(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 36,
-                  color: Colors.white),
-            ),
-          ),
-          Container(
-            height: 45,
-            width: screenWidth - 76,
-            margin: const EdgeInsets.only(top: 78, left: 38, right: 38),
-            padding: const EdgeInsets.only(left: 25, right: 25),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(35), color: Colors.white),
-            child: TextField(
-              decoration: const InputDecoration(
-                  border: InputBorder.none, hintText: 'Email'),
-              controller: emailController,
-              style: GoogleFonts.raleway(
-                fontWeight: FontWeight.w400,
-                fontSize: 20,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          Container(
-            height: 45,
-            width: screenWidth - 76,
-            margin: const EdgeInsets.only(top: 40, left: 38, right: 38),
-            padding: const EdgeInsets.only(left: 25, right: 25),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(35),
-              color: Colors.white,
-            ),
-            child: TextField(
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Password',
-                suffixIcon: IconButton(
-                    icon: Icon(
-                      _isObscure ? Icons.visibility : Icons.visibility_off,
-                    ),
-                    onPressed: showPassword,
-                ),
-              ),
-              controller: passwordController,
-              obscureText: _isObscure,
-              style: GoogleFonts.raleway(
-                fontWeight: FontWeight.w400,
-                fontSize: 20,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          Container(
-            height: 45,
-            width: screenWidth - 76,
-            margin: const EdgeInsets.only(top: 40, left: 38, right: 38),
-            padding: const  EdgeInsets.only(left: 25, right: 25),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(35),
-                color: Colors.black
-            ),
-            child: TextButton(
-              onPressed: signIn,
+      body: Center(
+        child: ListView(
+          primary: false,
+          shrinkWrap: true,
+          children: [
+            Center(
               child: Text(
                 'Login',
                 style: GoogleFonts.raleway(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 36,
+                    color: Colors.white),
+              ),
+            ),
+            Container(
+              height: 45,
+              width: screenWidth - 76,
+              margin: const EdgeInsets.only(top: 78, left: 38, right: 38),
+              padding: const EdgeInsets.only(left: 25, right: 25),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(35), color: Colors.white),
+              child: TextField(
+                decoration: const InputDecoration(
+                    border: InputBorder.none, hintText: 'Email'),
+                controller: emailController,
+                style: GoogleFonts.raleway(
                   fontWeight: FontWeight.w400,
                   fontSize: 20,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: RichText(
-              text: TextSpan(
-                text: 'Don\'t have account? ',
-                style: GoogleFonts.raleway(
-                  color: Colors.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
+            Container(
+              height: 45,
+              width: screenWidth - 76,
+              margin: const EdgeInsets.only(top: 40, left: 38, right: 38),
+              padding: const EdgeInsets.only(left: 25, right: 25),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(35),
+                color: Colors.white,
+              ),
+              child: TextField(
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Password',
+                  suffixIcon: IconButton(
+                      icon: Icon(
+                        _isObscure ? Icons.visibility : Icons.visibility_off,
+                      ),
+                      onPressed: showPassword,
+                  ),
                 ),
-                children: [
-                  TextSpan(
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = widget.onClickedSignUp,
-                    text: 'Register!',
+                controller: passwordController,
+                obscureText: _isObscure,
+                style: GoogleFonts.raleway(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            Container(
+              height: 45,
+              width: screenWidth - 76,
+              margin: const EdgeInsets.only(top: 40, left: 38, right: 38),
+              padding: const  EdgeInsets.only(left: 25, right: 25),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(35),
+                  color: Colors.black
+              ),
+              child: TextButton(
+                onPressed: signIn,
+                child: Text(
+                  'Login',
+                  style: GoogleFonts.raleway(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 20,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: RichText(
+                  text: TextSpan(
+                    text: 'Don\'t have account? ',
                     style: GoogleFonts.raleway(
                       color: Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
-                      decoration: TextDecoration.underline,
                     ),
+                    children: [
+                      TextSpan(
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = widget.onClickedSignUp,
+                        text: 'Register!',
+                        style: GoogleFonts.raleway(
+                          color: Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: RichText(
-              text: TextSpan(
-                text: 'Forgot password? ',
-                style: GoogleFonts.raleway(
-                  color: Colors.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
-                ),
-                children: [
-                  TextSpan(
-                    /*recognizer: TapGestureRecognizer()
-                      ..onTap = widget.onClickedSignUp,*/
-                    text: 'Restore',
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: RichText(
+                  text: TextSpan(
+                    text: 'Forgot password? ',
                     style: GoogleFonts.raleway(
                       color: Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
-                      decoration: TextDecoration.underline,
                     ),
+                    children: [
+                      TextSpan(
+                        /*recognizer: TapGestureRecognizer()
+                          ..onTap = widget.onClickedSignUp,*/
+                        text: 'Restore',
+                        style: GoogleFonts.raleway(
+                          color: Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
