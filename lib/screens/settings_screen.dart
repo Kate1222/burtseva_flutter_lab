@@ -1,4 +1,5 @@
 import 'package:burtseva_flutter_lab/screens/sign_in_builder.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -68,12 +69,17 @@ class SettingsScreen extends StatelessWidget {
               child: Align(
                 alignment: Alignment.center,
                 child: TextButton(
-                  onPressed: () {
-                    FirebaseAuth.instance
-                        .authStateChanges()
-                        .listen((User? user) {
+                  onPressed: () async {
+                    final userId = FirebaseAuth.instance.currentUser!.uid;
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(userId)
+                        .delete();
+
+                    FirebaseAuth.instance.authStateChanges().listen((User? user) {
                       user?.delete();
                     });
+                    // ignore: use_build_context_synchronously
                     Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(

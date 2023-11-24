@@ -1,3 +1,5 @@
+import 'package:burtseva_flutter_lab/screens/home_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -54,10 +56,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       snackBar('Wrong confirm password!');
     } else {
       try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        try {
+          FirebaseAuth.instance.signOut();
+        }
+        catch (e) {
+          print(e);
+        }
+        UserCredential userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
+        final FirebaseFirestore firestore = FirebaseFirestore.instance;
+        firestore.collection('users').doc(userCredential.user!.uid).set({
+          'email': emailController.text,
+          'uid': userCredential.user!.uid,
+          'admin': 'false',
+          'bonuses': 0,
+        });
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ), (route) => false);
       } on FirebaseAuthException catch (e) {
         snackBar(e.toString());
       }

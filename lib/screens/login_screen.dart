@@ -3,6 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'home_screen.dart';
+
 class LoginScreen extends StatefulWidget {
   final VoidCallback onClickedSignUp;
 
@@ -17,7 +19,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordController = TextEditingController();
 
   bool _isObscure = true;
-
   void showPassword() {
     setState(() {
       _isObscure = !_isObscure;
@@ -36,6 +37,10 @@ class _LoginScreenState extends State<LoginScreen> {
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ), (route) => false);
       } on FirebaseAuthException catch (e) {
         snackBar(e.toString());
       }
@@ -53,10 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: Colors.grey,
@@ -106,10 +108,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   border: InputBorder.none,
                   hintText: 'Password',
                   suffixIcon: IconButton(
-                      icon: Icon(
-                        _isObscure ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: showPassword,
+                    icon: Icon(
+                      _isObscure ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: showPassword,
                   ),
                 ),
                 controller: passwordController,
@@ -125,11 +127,9 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 45,
               width: screenWidth - 76,
               margin: const EdgeInsets.only(top: 40, left: 38, right: 38),
-              padding: const  EdgeInsets.only(left: 25, right: 25),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(35),
-                  color: Colors.black
-              ),
+                  borderRadius: BorderRadius.circular(35), color: Colors.black),
               child: TextButton(
                 onPressed: signIn,
                 child: Text(
