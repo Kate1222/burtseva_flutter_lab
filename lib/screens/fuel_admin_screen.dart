@@ -1,73 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:input_quantity/input_quantity.dart';
 
-class FuelScreen extends StatefulWidget {
+class FuelAdminScreen extends StatefulWidget {
   final String title;
+  final dynamic data;
 
-  const FuelScreen({super.key, required this.title});
+  const FuelAdminScreen({super.key, required this.title, required this.data});
 
   @override
-  State<FuelScreen> createState() => _FuelScreenState();
+  State<FuelAdminScreen> createState() => _FuelAdminScreenState();
 }
 
-class _FuelScreenState extends State<FuelScreen> {
-  int countFuel = 0;
-  double costFuel = 0;
-
-  int buyFuelValue = 0;
-  double calculateCostValue = 0;
-
-  int userCountBonuses = 0;
-  int userSelectCountBonuses = 0;
-
-  Future<void> getData() async {
-    final dataFuel = await FirebaseFirestore.instance
-        .collection('fuels')
-        .doc(widget.title)
-        .get();
-    final dataUser = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
-    if (dataFuel['limit'] == 0) {
-      setState(() {
-        countFuel = dataFuel['count'];
-      });
-    } else if (dataFuel['count'] < dataFuel['limit']) {
-      setState(() {
-        countFuel = dataFuel['count'];
-      });
-    } else {
-      setState(() {
-        countFuel = dataFuel['limit'];
-      });
-    }
-    setState(() {
-      costFuel = double.parse(dataFuel['cost'].toString());
-      userCountBonuses = dataUser['bonuses'];
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
-
-  void calculateCost() {
-    setState(() {
-      calculateCostValue = buyFuelValue * costFuel;
-      if (buyFuelValue != 0 && userSelectCountBonuses != 0) {
-        calculateCostValue -= userSelectCountBonuses;
-      }
-    });
-  }
-
+class _FuelAdminScreenState extends State<FuelAdminScreen> {
   @override
   Widget build(BuildContext context) {
+    int countFuel = widget.data['count'];
+    double costFuel = double.parse(widget.data['cost'].toString());
+    int limitFuel = widget.data['limit'];
+
+    int newFuelCount = countFuel;
+    double newCost = costFuel;
+    int newLimit = limitFuel;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey,
@@ -76,7 +32,7 @@ class _FuelScreenState extends State<FuelScreen> {
           color: Colors.white, //change your color here
         ),
         title: Text(
-          widget.title,
+          '${widget.title} Admin',
           style: GoogleFonts.raleway(
               fontWeight: FontWeight.w700, fontSize: 36, color: Colors.white),
         ),
@@ -87,24 +43,44 @@ class _FuelScreenState extends State<FuelScreen> {
           primary: false,
           shrinkWrap: true,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
-              child: Text(
-                'After bought more, than 15 litters you get 1 bonus, for each litter!\n1 bonus = to 1 UAH!',
-                style: GoogleFonts.raleway(
-                  fontSize: 25,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.yellow,
-                ),
-              ),
-            ),
             Center(
               child: Text(
-                'Max bought value: $countFuel litres',
+                'Current fuel value: $countFuel litres',
                 style: GoogleFonts.raleway(
                   fontSize: 25,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 25,
+            ),
+            Center(
+              child: InputQty.int(
+                minVal: 0,
+                initVal: countFuel,
+                //maxVal: countFuel,
+                onQtyChanged: (value) {
+                  newFuelCount = value;
+                },
+                messageBuilder: (minVal, maxVal, value) => Text(
+                  "New fuel count",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.raleway(
+                    fontSize: 25,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                qtyFormProps: const QtyFormProps(cursorColor: Colors.black),
+                decoration: const QtyDecorationProps(
+                  qtyStyle: QtyStyle.btnOnRight,
+                  width: 25,
+                  constraints: BoxConstraints(minWidth: 200, maxWidth: 200),
+                  fillColor: Colors.white,
+                  isBordered: false,
+                  borderShape: BorderShapeBtn.square,
                 ),
               ),
             ),
@@ -125,16 +101,15 @@ class _FuelScreenState extends State<FuelScreen> {
               height: 25,
             ),
             Center(
-              child: InputQty.int(
+              child: InputQty.double(
                 minVal: 0,
-                initVal: 0,
-                maxVal: countFuel,
+                initVal: costFuel,
+                //maxVal: countFuel,
                 onQtyChanged: (value) {
-                  buyFuelValue = value;
-                  calculateCost();
+                  newCost = value;
                 },
                 messageBuilder: (minVal, maxVal, value) => Text(
-                  "Fuel count",
+                  "New cost",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.raleway(
                     fontSize: 25,
@@ -158,7 +133,7 @@ class _FuelScreenState extends State<FuelScreen> {
             ),
             Center(
               child: Text(
-                'Bonuses count: $userCountBonuses',
+                'Current fuel limit: $limitFuel litres',
                 style: GoogleFonts.raleway(
                   fontSize: 25,
                   fontWeight: FontWeight.w700,
@@ -171,15 +146,14 @@ class _FuelScreenState extends State<FuelScreen> {
             ),
             Center(
               child: InputQty.int(
-                initVal: 0,
                 minVal: 0,
-                maxVal: userCountBonuses,
+                initVal: limitFuel,
+                //maxVal: countFuel,
                 onQtyChanged: (value) {
-                  userSelectCountBonuses = value;
-                  calculateCost();
+                  newLimit = value;
                 },
                 messageBuilder: (minVal, maxVal, value) => Text(
-                  "Bonus count",
+                  "New fuel limit",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.raleway(
                     fontSize: 25,
@@ -200,16 +174,6 @@ class _FuelScreenState extends State<FuelScreen> {
             ),
             const SizedBox(
               height: 25,
-            ),
-            Center(
-              child: Text(
-                'It will cost: $calculateCostValue UAH',
-                style: GoogleFonts.raleway(
-                  fontSize: 25,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
@@ -218,25 +182,20 @@ class _FuelScreenState extends State<FuelScreen> {
                   FirebaseFirestore.instance
                       .collection('fuels')
                       .doc(widget.title)
-                      .update({'count': countFuel - buyFuelValue});
-
-                  userCountBonuses -= userSelectCountBonuses;
-
-                  if (buyFuelValue >= 15) {
-                    userCountBonuses += buyFuelValue - 14;
-                  }
-
+                      .update({'count': newFuelCount});
                   FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(FirebaseAuth.instance.currentUser!.uid)
-                      .update({
-                    'bonuses': userCountBonuses});
-
+                      .collection('fuels')
+                      .doc(widget.title)
+                      .update({'cost': newCost});
+                  FirebaseFirestore.instance
+                      .collection('fuels')
+                      .doc(widget.title)
+                      .update({'limit': newLimit});
                   Navigator.pop(context);
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Successful sold!'),
+                      content: Text('Successful changed!'),
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
@@ -248,7 +207,7 @@ class _FuelScreenState extends State<FuelScreen> {
                   child: Align(
                     alignment: Alignment.center,
                     child: Text(
-                      'Buy!',
+                      'Set!',
                       style: GoogleFonts.raleway(
                           fontSize: 32, fontWeight: FontWeight.w700),
                     ),

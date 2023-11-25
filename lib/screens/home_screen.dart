@@ -1,3 +1,4 @@
+import 'package:burtseva_flutter_lab/screens/fuel_admin_screen.dart';
 import 'package:burtseva_flutter_lab/screens/fuel_screen.dart';
 import 'package:burtseva_flutter_lab/screens/settings_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -44,6 +45,52 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     getUserStatus();
+  }
+
+  void availabilityCheck(String fuelName) async {
+    final dataFuel = await FirebaseFirestore.instance
+        .collection('fuels')
+        .doc(fuelName)
+        .get();
+
+    if (dataFuel['count'] == 0) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sold out!'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+    else {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FuelScreen(
+            title: fuelName,
+          ),
+        ),
+      );
+    }
+  }
+
+  void openAdminFuelScreen(String fuelName) async {
+    final dataFuel = await FirebaseFirestore.instance
+        .collection('fuels')
+        .doc(fuelName)
+        .get();
+
+    // ignore: use_build_context_synchronously
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FuelAdminScreen(
+          title: fuelName,
+          data: dataFuel,
+        ),
+      ),
+    );
   }
 
   @override
@@ -126,13 +173,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         horizontal: 30, vertical: 10),
                     child: IconButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const FuelScreen(title: 'A-92'),
-                          ),
-                        );
+                        if (modeStatus == 'Enabled') {
+                          openAdminFuelScreen('A-92');
+                        } else {
+                          availabilityCheck('A-92');
+                        }
                       },
                       icon: Container(
                         decoration: BoxDecoration(
@@ -154,13 +199,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         horizontal: 30, vertical: 10),
                     child: IconButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const FuelScreen(title: 'A-95'),
-                          ),
-                        );
+                        if (modeStatus == 'Enabled') {
+                          openAdminFuelScreen('A-95');
+                        } else {
+                          availabilityCheck('A-95');
+                        }
                       },
                       icon: Container(
                         decoration: BoxDecoration(
@@ -182,18 +225,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         horizontal: 30, vertical: 10),
                     child: IconButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const FuelScreen(title: 'Diesel'),
-                          ),
-                        );
+                        if (modeStatus == 'Enabled') {
+                          openAdminFuelScreen('Diesel');
+                        } else {
+                          availabilityCheck('Diesel');
+                        }
                       },
                       icon: Container(
-                        //height: 45,
-                        //width: screenWidth - 76,
-                        //margin: const EdgeInsets.only(top: 40, left: 38, right: 38),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(35),
                             color: Colors.white),
@@ -213,18 +251,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         horizontal: 30, vertical: 10),
                     child: IconButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const FuelScreen(title: 'Gaz'),
-                          ),
-                        );
+                        if (modeStatus == 'Enabled') {
+                          openAdminFuelScreen('Gaz');
+                        } else {
+                          availabilityCheck('Gaz');
+                        }
                       },
                       icon: Container(
-                        //height: 45,
-                        //width: screenWidth - 76,
-                        //margin: const EdgeInsets.only(top: 40, left: 38, right: 38),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(35),
                             color: Colors.white),
@@ -239,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  Padding(
+                  /*Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 30, vertical: 10),
                     child: IconButton(
@@ -258,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
                   isAdmin
                       ? Padding(
                           padding: const EdgeInsets.symmetric(
