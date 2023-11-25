@@ -15,12 +15,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String modeStatus = 'Disabled';
 
-  void changeModeStatus () {
+  void changeModeStatus() {
     setState(() {
       if (modeStatus == 'Disabled') {
         modeStatus = 'Enabled';
-      }
-      else {
+      } else {
         modeStatus = 'Disabled';
       }
     });
@@ -31,7 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> getUserStatus() async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
-    final data = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    final data =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
     setState(() {
       if (data['admin'] == 'true') {
         isAdmin = true;
@@ -82,7 +82,9 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Text(
               'Bonuses: $bonusesValue',
               style: GoogleFonts.raleway(
-                  fontWeight: FontWeight.w700, fontSize: 28, color: Colors.white),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 28,
+                  color: Colors.white),
             ),
           ),
           Expanded(
@@ -91,28 +93,48 @@ class _HomeScreenState extends State<HomeScreen> {
                 primary: false,
                 shrinkWrap: true,
                 children: [
-                  isAdmin ? Center(
-                    child: Text(
-                      'Admin mode "$modeStatus"',
-                      style: GoogleFonts.raleway(
-                          fontWeight: FontWeight.w700, fontSize: 28, color: Colors.white),
-                    ),
-                  ) : Container(),
+                  isAdmin
+                      ? SizedBox(
+                          width: MediaQuery.of(context).size.width - 32,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Admin mode ',
+                                style: GoogleFonts.raleway(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 28,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                '"$modeStatus"',
+                                style: GoogleFonts.raleway(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 28,
+                                  color: modeStatus == 'Enabled'
+                                      ? Colors.greenAccent
+                                      : Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container(),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 10),
                     child: IconButton(
                       onPressed: () {
-
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const FuelScreen(title: 'A-92'),
+                            builder: (context) =>
+                                const FuelScreen(title: 'A-92'),
                           ),
                         );
                       },
                       icon: Container(
-                        //height: 45,
-                        //width: screenWidth - 76,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(35),
                             color: Colors.white),
@@ -128,20 +150,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 10),
                     child: IconButton(
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const FuelScreen(title: 'A-95'),
+                            builder: (context) =>
+                                const FuelScreen(title: 'A-95'),
                           ),
                         );
                       },
                       icon: Container(
-                        //height: 45,
-                        //width: screenWidth - 76,
-                        //margin: const EdgeInsets.only(top: 40, left: 38, right: 38),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(35),
                             color: Colors.white),
@@ -157,13 +178,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 10),
                     child: IconButton(
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const FuelScreen(title: 'Diesel'),
+                            builder: (context) =>
+                                const FuelScreen(title: 'Diesel'),
                           ),
                         );
                       },
@@ -186,13 +209,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 10),
                     child: IconButton(
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const FuelScreen(title: 'Gaz'),
+                            builder: (context) =>
+                                const FuelScreen(title: 'Gaz'),
                           ),
                         );
                       },
@@ -207,6 +232,26 @@ class _HomeScreenState extends State<HomeScreen> {
                           alignment: Alignment.center,
                           child: Text(
                             'Gaz',
+                            style: GoogleFonts.raleway(
+                                fontSize: 32, fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 10),
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(35),
+                            color: Colors.white),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Calculator',
                             style: GoogleFonts.raleway(
                                 fontSize: 32, fontWeight: FontWeight.w700),
                           ),
