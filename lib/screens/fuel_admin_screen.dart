@@ -43,6 +43,7 @@ class _FuelAdminScreenState extends State<FuelAdminScreen> {
           primary: false,
           shrinkWrap: true,
           children: [
+            //display current fuel count
             Center(
               child: Text(
                 'Current fuel value: $countFuel litres',
@@ -56,6 +57,7 @@ class _FuelAdminScreenState extends State<FuelAdminScreen> {
             const SizedBox(
               height: 25,
             ),
+            //number field for count fuel
             Center(
               child: InputQty.int(
                 minVal: 0,
@@ -87,6 +89,7 @@ class _FuelAdminScreenState extends State<FuelAdminScreen> {
             const SizedBox(
               height: 25,
             ),
+            //display current cost fuel
             Center(
               child: Text(
                 'Cost for 1 liter: $costFuel UAH',
@@ -100,6 +103,7 @@ class _FuelAdminScreenState extends State<FuelAdminScreen> {
             const SizedBox(
               height: 25,
             ),
+            //number field for cost fuel
             Center(
               child: InputQty.double(
                 minVal: 0,
@@ -131,6 +135,7 @@ class _FuelAdminScreenState extends State<FuelAdminScreen> {
             const SizedBox(
               height: 25,
             ),
+            //display buy limit for fuel
             Center(
               child: Text(
                 'Current fuel limit: $limitFuel litres',
@@ -144,6 +149,7 @@ class _FuelAdminScreenState extends State<FuelAdminScreen> {
             const SizedBox(
               height: 25,
             ),
+            //number field for buy limit fuel
             Center(
               child: InputQty.int(
                 minVal: 0,
@@ -175,6 +181,7 @@ class _FuelAdminScreenState extends State<FuelAdminScreen> {
             const SizedBox(
               height: 25,
             ),
+            //set button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
               child: IconButton(
@@ -182,16 +189,16 @@ class _FuelAdminScreenState extends State<FuelAdminScreen> {
                   FirebaseFirestore.instance
                       .collection('fuels')
                       .doc(widget.title)
-                      .update({'count': newFuelCount});
+                      .update({'count': newFuelCount}); //update count fuel
                   FirebaseFirestore.instance
                       .collection('fuels')
                       .doc(widget.title)
-                      .update({'cost': newCost});
+                      .update({'cost': newCost}); //update cost fuel
                   FirebaseFirestore.instance
                       .collection('fuels')
                       .doc(widget.title)
-                      .update({'limit': newLimit});
-                  Navigator.pop(context);
+                      .update({'limit': newLimit}); //update buy limit fuel
+                  Navigator.pop(context); //back to previous screen
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

@@ -1,16 +1,12 @@
 import 'package:burtseva_flutter_lab/screens/home_screen.dart';
+import 'package:burtseva_flutter_lab/screens/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-//import 'home_screen.dart';
-
 class RegistrationScreen extends StatefulWidget {
-  final VoidCallback onClickedSignIn;
-
-  const RegistrationScreen({super.key, required this.onClickedSignIn});
+  const RegistrationScreen({super.key});
 
   @override
   State<RegistrationScreen> createState() => _RegistrationScreenState();
@@ -48,6 +44,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   //registration
   Future registration() async {
+    //check text field text
     if (emailController.text == '' ||
         passwordController.text == '' ||
         repeatPasswordController.text == '') {
@@ -56,17 +53,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       snackBar('Wrong confirm password!');
     } else {
       try {
-        try {
-          FirebaseAuth.instance.signOut();
-        }
-        catch (e) {
-          print(e);
-        }
+        //create new user
         UserCredential userCredential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
+        //write info about user to database
         final FirebaseFirestore firestore = FirebaseFirestore.instance;
         firestore.collection('users').doc(userCredential.user!.uid).set({
           'email': emailController.text,
@@ -74,11 +67,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           'admin': 'false',
           'bonuses': 0,
         });
+
+        //navigate to home screen
         // ignore: use_build_context_synchronously
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ), (route) => false);
+        Navigator.pushAndRemoveUntil(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (_, __, ___) =>
+              const HomeScreen(),
+              transitionsBuilder: (_, a, __, c) =>
+                  FadeTransition(opacity: a, child: c),
+            ),
+            (route) => false);
       } on FirebaseAuthException catch (e) {
+        //snack bar error
         snackBar(e.toString());
       }
     }
@@ -104,10 +106,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     color: Colors.white),
               ),
             ),
+            //email text field
             Container(
               height: 45,
               width: screenWidth - 76,
-              margin: const EdgeInsets.only(top: 78, left: 38, right: 38),
+              margin: const EdgeInsets.only(top: 38, left: 38, right: 38),
               padding: const EdgeInsets.only(left: 25, right: 25),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(35), color: Colors.white),
@@ -122,6 +125,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
             ),
+            //password text field
             Container(
               height: 45,
               width: screenWidth - 76,
@@ -151,6 +155,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
             ),
+            //repeat password text field
             Container(
               height: 45,
               width: screenWidth - 76,
@@ -180,6 +185,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
             ),
+            //registration button
             Container(
               height: 45,
               width: screenWidth - 76,
@@ -199,32 +205,43 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
             ),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: RichText(
-                  text: TextSpan(
-                    text: 'Have account? ',
+            //login text button
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Have account?',
                     style: GoogleFonts.raleway(
                       color: Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
                     ),
-                    children: [
-                      TextSpan(
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = widget.onClickedSignIn,
-                        text: 'Login!',
-                        style: GoogleFonts.raleway(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w400,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ],
                   ),
-                ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (_, __, ___) =>
+                            const LoginScreen(),
+                            transitionsBuilder: (_, a, __, c) =>
+                                FadeTransition(opacity: a, child: c),
+                          ),
+                              (route) => false);
+                    },
+                    child: Text(
+                      'Login!',
+                      style: GoogleFonts.raleway(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

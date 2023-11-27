@@ -1,46 +1,55 @@
+import 'package:burtseva_flutter_lab/screens/registration_screen.dart';
+import 'package:burtseva_flutter_lab/screens/restore_password_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  final VoidCallback onClickedSignUp;
-
-  const LoginScreen({super.key, required this.onClickedSignUp});
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  //text field controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   bool _isObscure = true;
+
   void showPassword() {
     setState(() {
       _isObscure = !_isObscure;
     });
   }
 
+  //sigh in function
   signIn() async {
+    //check text field text
     if (emailController.text == '' || passwordController.text == '') {
       snackBar("Input email and password!");
     } else {
       try {
-        setState(() {
-          const Center(child: CircularProgressIndicator());
-        });
+        //login to user account
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
+
+        //navigate to home screen
         // ignore: use_build_context_synchronously
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ), (route) => false);
+        Navigator.pushAndRemoveUntil(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (_, __, ___) =>
+              const HomeScreen(),
+              transitionsBuilder: (_, a, __, c) =>
+                  FadeTransition(opacity: a, child: c),
+            ),
+            (route) => false);
       } on FirebaseAuthException catch (e) {
         snackBar(e.toString());
       }
@@ -76,10 +85,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Colors.white),
               ),
             ),
+            //email text field
             Container(
               height: 45,
               width: screenWidth - 76,
-              margin: const EdgeInsets.only(top: 78, left: 38, right: 38),
+              margin: const EdgeInsets.only(top: 38, left: 38, right: 38),
               padding: const EdgeInsets.only(left: 25, right: 25),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(35), color: Colors.white),
@@ -94,6 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
+            //password text field
             Container(
               height: 45,
               width: screenWidth - 76,
@@ -123,6 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
+            //login button
             Container(
               height: 45,
               width: screenWidth - 76,
@@ -142,60 +154,82 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: RichText(
-                  text: TextSpan(
-                    text: 'Don\'t have account? ',
+            //register text button
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Don\'t have account?',
                     style: GoogleFonts.raleway(
                       color: Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
                     ),
-                    children: [
-                      TextSpan(
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = widget.onClickedSignUp,
-                        text: 'Register!',
-                        style: GoogleFonts.raleway(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w400,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ],
                   ),
-                ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (_, __, ___) =>
+                                const RegistrationScreen(),
+                            transitionsBuilder: (_, a, __, c) =>
+                                FadeTransition(opacity: a, child: c),
+                          ),
+                          (route) => false);
+                    },
+                    child: Text(
+                      'Register!',
+                      style: GoogleFonts.raleway(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: RichText(
-                  text: TextSpan(
-                    text: 'Forgot password? ',
+            //restore text button
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Forgot password?',
                     style: GoogleFonts.raleway(
                       color: Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
                     ),
-                    children: [
-                      TextSpan(
-                        /*recognizer: TapGestureRecognizer()
-                          ..onTap = widget.onClickedSignUp,*/
-                        text: 'Restore',
-                        style: GoogleFonts.raleway(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w400,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ],
                   ),
-                ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (_, __, ___) =>
+                                const RestorePasswordScreen(),
+                            transitionsBuilder: (_, a, __, c) =>
+                                FadeTransition(opacity: a, child: c),
+                          ),
+                      );
+                    },
+                    child: Text(
+                      'Restore!',
+                      style: GoogleFonts.raleway(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

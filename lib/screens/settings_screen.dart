@@ -1,4 +1,4 @@
-import 'package:burtseva_flutter_lab/screens/sign_in_builder.dart';
+import 'package:burtseva_flutter_lab/screens/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +33,7 @@ class SettingsScreen extends StatelessWidget {
           primary: false,
           shrinkWrap: true,
           children: [
+            //logout button
             Container(
               height: 45,
               width: screenWidth - 76,
@@ -43,11 +44,14 @@ class SettingsScreen extends StatelessWidget {
                 alignment: Alignment.center,
                 child: TextButton(
                   onPressed: () {
+                    //logout user account
                     FirebaseAuth.instance.signOut();
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(
-                            builder: (_) => const SignInBuilder()),
+                        PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => const LoginScreen(),
+                          transitionsBuilder: (_, a, __, c) => FadeTransition(opacity: a, child: c),
+                        ),
                         (route) => false);
                   },
                   child: Text(
@@ -60,6 +64,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
             ),
+            //remove account button
             Container(
               height: 45,
               width: screenWidth - 76,
@@ -70,20 +75,24 @@ class SettingsScreen extends StatelessWidget {
                 alignment: Alignment.center,
                 child: TextButton(
                   onPressed: () async {
+                    //remove user info from database
                     final userId = FirebaseAuth.instance.currentUser!.uid;
                     await FirebaseFirestore.instance
                         .collection('users')
                         .doc(userId)
                         .delete();
 
+                    //remove user account
                     FirebaseAuth.instance.authStateChanges().listen((User? user) {
                       user?.delete();
                     });
                     // ignore: use_build_context_synchronously
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(
-                            builder: (_) => const SignInBuilder()),
+                        PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => const LoginScreen(),
+                          transitionsBuilder: (_, a, __, c) => FadeTransition(opacity: a, child: c),
+                        ),
                         (route) => false);
                   },
                   child: Text(

@@ -57,6 +57,7 @@ class _FuelScreenState extends State<FuelScreen> {
     getData();
   }
 
+  //calculate cost function
   void calculateCost() {
     setState(() {
       calculateCostValue = buyFuelValue * costFuel;
@@ -87,6 +88,7 @@ class _FuelScreenState extends State<FuelScreen> {
           primary: false,
           shrinkWrap: true,
           children: [
+            //message text
             Padding(
               padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
               child: Text(
@@ -98,6 +100,7 @@ class _FuelScreenState extends State<FuelScreen> {
                 ),
               ),
             ),
+            //display max bought value
             Center(
               child: Text(
                 'Max bought value: $countFuel litres',
@@ -111,6 +114,7 @@ class _FuelScreenState extends State<FuelScreen> {
             const SizedBox(
               height: 25,
             ),
+            //display cost fuel
             Center(
               child: Text(
                 'Cost for 1 liter: $costFuel UAH',
@@ -124,6 +128,7 @@ class _FuelScreenState extends State<FuelScreen> {
             const SizedBox(
               height: 25,
             ),
+            //number field for count fuel
             Center(
               child: InputQty.int(
                 minVal: 0,
@@ -156,6 +161,7 @@ class _FuelScreenState extends State<FuelScreen> {
             const SizedBox(
               height: 25,
             ),
+            //display count user bonuses
             Center(
               child: Text(
                 'Bonuses count: $userCountBonuses',
@@ -169,6 +175,7 @@ class _FuelScreenState extends State<FuelScreen> {
             const SizedBox(
               height: 25,
             ),
+            //number field for user bonuses
             Center(
               child: InputQty.int(
                 initVal: 0,
@@ -201,6 +208,7 @@ class _FuelScreenState extends State<FuelScreen> {
             const SizedBox(
               height: 25,
             ),
+            //display calculate cost
             Center(
               child: Text(
                 'It will cost: $calculateCostValue UAH',
@@ -211,6 +219,7 @@ class _FuelScreenState extends State<FuelScreen> {
                 ),
               ),
             ),
+            //buy button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
               child: IconButton(
@@ -218,7 +227,7 @@ class _FuelScreenState extends State<FuelScreen> {
                   FirebaseFirestore.instance
                       .collection('fuels')
                       .doc(widget.title)
-                      .update({'count': countFuel - buyFuelValue});
+                      .update({'count': countFuel - buyFuelValue}); //update count fuel
 
                   userCountBonuses -= userSelectCountBonuses;
 
@@ -230,9 +239,9 @@ class _FuelScreenState extends State<FuelScreen> {
                       .collection('users')
                       .doc(FirebaseAuth.instance.currentUser!.uid)
                       .update({
-                    'bonuses': userCountBonuses});
+                    'bonuses': userCountBonuses}); //update user bonuses count
 
-                  Navigator.pop(context);
+                  Navigator.pop(context); //back to previous screen
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

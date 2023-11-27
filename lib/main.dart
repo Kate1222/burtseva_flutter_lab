@@ -1,5 +1,5 @@
 import 'package:burtseva_flutter_lab/screens/home_screen.dart';
-import 'package:burtseva_flutter_lab/screens/sign_in_builder.dart';
+import 'package:burtseva_flutter_lab/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -36,11 +36,11 @@ class MyApp extends StatelessWidget {
               return const HomeScreen();
             }
             else {
-              return const SignInBuilder();
+              //return const SignInBuilder();
+              return const LoginScreen();
             }
           },
         ),
-        //body: SignInBuilder(),
       ),
     );
   }
