@@ -1,3 +1,5 @@
+import 'package:burtseva_flutter_lab/components/button.dart';
+import 'package:burtseva_flutter_lab/functions/buy_fuel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -220,50 +222,19 @@ class _FuelScreenState extends State<FuelScreen> {
               ),
             ),
             //buy button
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              child: IconButton(
-                onPressed: () {
-                  FirebaseFirestore.instance
-                      .collection('fuels')
-                      .doc(widget.title)
-                      .update({'count': countFuel - buyFuelValue}); //update count fuel
-
-                  userCountBonuses -= userSelectCountBonuses;
-
-                  if (buyFuelValue >= 15) {
-                    userCountBonuses += buyFuelValue - 14;
-                  }
-
-                  FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(FirebaseAuth.instance.currentUser!.uid)
-                      .update({
-                    'bonuses': userCountBonuses}); //update user bonuses count
-
-                  Navigator.pop(context); //back to previous screen
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Successful sold!'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                },
-                icon: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(35),
-                      color: Colors.white),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Buy!',
-                      style: GoogleFonts.raleway(
-                          fontSize: 32, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ),
-              ),
+            AzsButton(
+              function: () {
+                azsBuyFuel(
+                  context,
+                  widget.title,
+                  countFuel,
+                  buyFuelValue,
+                  userCountBonuses,
+                  userSelectCountBonuses,
+                );
+              },
+              label: 'Buy!',
+              textColor: Colors.white,
             ),
           ],
         ),

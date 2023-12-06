@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:burtseva_flutter_lab/components/button.dart';
+import 'package:burtseva_flutter_lab/functions/admin_set_fuel_data.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:input_quantity/input_quantity.dart';
@@ -182,45 +183,18 @@ class _FuelAdminScreenState extends State<FuelAdminScreen> {
               height: 25,
             ),
             //set button
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              child: IconButton(
-                onPressed: () {
-                  FirebaseFirestore.instance
-                      .collection('fuels')
-                      .doc(widget.title)
-                      .update({'count': newFuelCount}); //update count fuel
-                  FirebaseFirestore.instance
-                      .collection('fuels')
-                      .doc(widget.title)
-                      .update({'cost': newCost}); //update cost fuel
-                  FirebaseFirestore.instance
-                      .collection('fuels')
-                      .doc(widget.title)
-                      .update({'limit': newLimit}); //update buy limit fuel
-                  Navigator.pop(context); //back to previous screen
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Successful changed!'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                },
-                icon: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(35),
-                      color: Colors.white),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Set!',
-                      style: GoogleFonts.raleway(
-                          fontSize: 32, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ),
-              ),
+            AzsButton(
+              function: () {
+                adminSetFuelData(
+                  context,
+                  widget.title,
+                  newFuelCount,
+                  newCost,
+                  newLimit,
+                );
+              },
+              label: 'Set!',
+              textColor: Colors.white,
             ),
           ],
         ),

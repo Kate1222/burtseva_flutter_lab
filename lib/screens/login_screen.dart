@@ -1,10 +1,14 @@
+import 'package:burtseva_flutter_lab/components/button.dart';
+import 'package:burtseva_flutter_lab/components/navigator.dart';
+import 'package:burtseva_flutter_lab/components/text_button.dart';
+import 'package:burtseva_flutter_lab/functions/sign_in.dart';
 import 'package:burtseva_flutter_lab/screens/registration_screen.dart';
 import 'package:burtseva_flutter_lab/screens/restore_password_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'home_screen.dart';
+import '../components/text_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,57 +22,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  bool _isObscure = true;
-
-  void showPassword() {
-    setState(() {
-      _isObscure = !_isObscure;
-    });
-  }
-
-  //sigh in function
-  signIn() async {
-    //check text field text
-    if (emailController.text == '' || passwordController.text == '') {
-      snackBar("Input email and password!");
-    } else {
-      try {
-        //login to user account
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim(),
-        );
-
-        //navigate to home screen
-        // ignore: use_build_context_synchronously
-        Navigator.pushAndRemoveUntil(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (_, __, ___) =>
-              const HomeScreen(),
-              transitionsBuilder: (_, a, __, c) =>
-                  FadeTransition(opacity: a, child: c),
-            ),
-            (route) => false);
-      } on FirebaseAuthException catch (e) {
-        snackBar(e.toString());
-      }
-    }
-  }
-
-  void snackBar(String text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(text),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       backgroundColor: Colors.grey,
       body: Center(
@@ -76,161 +31,92 @@ class _LoginScreenState extends State<LoginScreen> {
           primary: false,
           shrinkWrap: true,
           children: [
+            //animated logo
+            AnimationLimiter(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: AnimationConfiguration.staggeredGrid(
+                    position: 0,
+                    columnCount: 1,
+                    child: Column(
+                      children: [
+                        FadeInAnimation(
+                          duration: const Duration(seconds: 5),
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: Image.asset('assets/icons/logo.png'),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        FadeInAnimation(
+                          child: Text(
+                            'AZS',
+                            style: GoogleFonts.raleway(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 36,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            //login text
             Center(
               child: Text(
                 'Login',
                 style: GoogleFonts.raleway(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 36,
-                    color: Colors.white),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 36,
+                  color: Colors.white,
+                ),
               ),
             ),
             //email text field
-            Container(
-              height: 45,
-              width: screenWidth - 76,
-              margin: const EdgeInsets.only(top: 38, left: 38, right: 38),
-              padding: const EdgeInsets.only(left: 25, right: 25),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(35), color: Colors.white),
-              child: TextField(
-                decoration: const InputDecoration(
-                    border: InputBorder.none, hintText: 'Email'),
-                controller: emailController,
-                style: GoogleFonts.raleway(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 20,
-                  color: Colors.black,
-                ),
-              ),
+            AzsTextField(
+              controller: emailController,
+              showVisibleButton: false,
+              label: 'Email',
             ),
             //password text field
-            Container(
-              height: 45,
-              width: screenWidth - 76,
-              margin: const EdgeInsets.only(top: 40, left: 38, right: 38),
-              padding: const EdgeInsets.only(left: 25, right: 25),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(35),
-                color: Colors.white,
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Password',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isObscure ? Icons.visibility : Icons.visibility_off,
-                    ),
-                    onPressed: showPassword,
-                  ),
-                ),
-                controller: passwordController,
-                obscureText: _isObscure,
-                style: GoogleFonts.raleway(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 20,
-                  color: Colors.black,
-                ),
-              ),
+            AzsTextField(
+              controller: passwordController,
+              showVisibleButton: true,
+              label: 'Password',
             ),
             //login button
-            Container(
-              height: 45,
-              width: screenWidth - 76,
-              margin: const EdgeInsets.only(top: 40, left: 38, right: 38),
-              padding: const EdgeInsets.only(left: 25, right: 25),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(35), color: Colors.black),
-              child: TextButton(
-                onPressed: signIn,
-                child: Text(
-                  'Login',
-                  style: GoogleFonts.raleway(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 20,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+            AzsButton(
+              function: () {
+                signIn(context, emailController, passwordController);
+              },
+              label: 'Login',
+              textColor: Colors.white,
             ),
             //register text button
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Don\'t have account?',
-                    style: GoogleFonts.raleway(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (_, __, ___) =>
-                                const RegistrationScreen(),
-                            transitionsBuilder: (_, a, __, c) =>
-                                FadeTransition(opacity: a, child: c),
-                          ),
-                          (route) => false);
-                    },
-                    child: Text(
-                      'Register!',
-                      style: GoogleFonts.raleway(
-                        color: Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            AzsTextButton(
+              function: () {
+                azsNavigatorPushAndRemoveUntil(
+                  context,
+                  const RegistrationScreen(),
+                );
+              },
+              mainText: "Don't have account?",
+              textButton: 'Register!',
             ),
             //restore text button
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Forgot password?',
-                    style: GoogleFonts.raleway(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (_, __, ___) =>
-                                const RestorePasswordScreen(),
-                            transitionsBuilder: (_, a, __, c) =>
-                                FadeTransition(opacity: a, child: c),
-                          ),
-                      );
-                    },
-                    child: Text(
-                      'Restore!',
-                      style: GoogleFonts.raleway(
-                        color: Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            AzsTextButton(
+              function: () {
+                azsNavigatorPush(context, const RestorePasswordScreen());
+              },
+              mainText: 'Forgot password?',
+              textButton: 'Restore!',
             ),
           ],
         ),
